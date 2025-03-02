@@ -1,3 +1,6 @@
 {
-    "pixelbyte.love2d.srcDir": "./src/"
+    "pixelbyte.love2d.srcDir": "./src/",
+    "Lua.diagnostics.globals": [
+        "love"
+    ]
 }

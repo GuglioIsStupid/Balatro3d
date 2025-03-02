@@ -1,3 +1,5 @@
 src/resources/*
 
 !src/resources/.gitkeep
+
+*.zip
