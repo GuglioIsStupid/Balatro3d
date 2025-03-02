@@ -8,5 +8,5 @@ function musicManager.load()
     musicManager.music = love.audio.newSource("resources/sounds/music1.ogg", "stream")
     musicManager.music:setLooping(true)
     musicManager.music:play()
-    musicManager.music:setPitch(0.7)
+    musicManager.music:setPitch(0.7125)
 end

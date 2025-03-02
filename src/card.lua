@@ -145,22 +145,46 @@ function Card(card, type, enhancer, data)
             if math.floor(self.x) == math.floor(ox) and math.floor(self.y) == math.floor(oy) then
                 self.rotation = lerp(self.rotation, self.origRotation, 10 * dt)
             else
+                local angle = math.atan2(self.y - oy, self.x - ox) + math.pi / 2
+                local diff = angle - self.rotation
+                if diff > math.pi then
+                    diff = diff - 2 * math.pi
+                elseif diff < -math.pi then
+                    diff = diff + 2 * math.pi
+                end
+
+                -- max of 15deg (0.261799 rad)
+                local rot = math.min(math.max(diff, -0.5), 0.5)
+
+                self.rotation = lerp(self.rotation, rot, 25 * dt)
             end
         else
+            local ox, oy = self.x, self.y
             self.x = lerp(self.x, self.mx, 25 * dt)
             self.y = lerp(self.y, self.my, 25 * dt)
-            -- set rotation in direction its going
-            self.origRotation = math.atan2(self.y - self.my, self.x - self.mx) + math.pi / 2
-            self.origRotation = math.min(math.max(self.rotation, -math.pi / 12), math.pi / 12)
+            
+            local angle = math.atan2(self.y - oy, self.x - ox) + math.pi / 2
+            local diff = angle - self.rotation
+            if diff > math.pi then
+                diff = diff - 2 * math.pi
+            elseif diff < -math.pi then
+                diff = diff + 2 * math.pi
+            end
 
-            self.rotation = lerp(self.rotation, self.origRotation, 50 * dt)
+            if math.floor(self.x) == math.floor(ox) and math.floor(self.y) == math.floor(oy) then
+                diff = 0
+            end
+
+            -- max of 15deg (0.261799 rad)
+            local rot = math.min(math.max(diff, -0.5), 0.5)
+
+            self.rotation = lerp(self.rotation, rot, 10 * dt)
         end
         self.scale = lerp(self.scale, self.origScale, 50 * dt)
     end
     
     function self:moved(x, y)
         self.mx, self.my = x, y
-        print("moved")
     end
 
     return self

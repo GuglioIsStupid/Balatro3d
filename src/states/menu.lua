@@ -148,11 +148,10 @@ function menu:enter()
                         
                     end,
                     onDrawBottom = function(self)
-                        self.deckCard:draw(237, 80 + self.parent.y, 0, 0.8, {0.5, 0.5, 0.5, 1}, true)
-                        self.deckCard:draw(236, 79 + self.parent.y, 0, 0.8, not self.deckCard.grabbed and {0.5, 0.5, 0.5, 1} or {1, 1, 1, 1}, true)
+                        self.deckCard:draw(236, 77 + self.parent.y, 0, 0.8, not self.deckCard.grabbed and {0.5, 0.5, 0.5, 1} or {1, 1, 1, 1}, true)
                         self.deckCard:draw(0, self.parent.y, 0, 0.8)
                     end,
-                    deckCard = Card("Ace", "Spade", "Back", {x = 235, y = 77})
+                    deckCard = Card("Ace", "Spade", "Back", {x = 235, y = 75})
                 },
                 ["continue"] = {
                     btns = {},
