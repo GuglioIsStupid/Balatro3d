@@ -1,5 +1,6 @@
 local SWITCH_POINT = 100000000000
-function numberFormat(num)    
+-- The number functions code is based on the code from the game, but has been cleaned up a bit to potentially run better on the 3DS
+function numberFormat(num)
     if type(num) ~= 'number' then return num or '' end
 
     if num >= SWITCH_POINT then
@@ -44,7 +45,6 @@ function getTexture(name)
         cache.texture[name] = love.graphics.newImage("resources/textures/" .. name .. ".png")
     end
 
-    print(cache.texture[name])
     return cache.texture[name]
 end
 
@@ -74,6 +74,7 @@ function Hex(hex)
     return {tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255, tonumber(a, 16) / 255}
 end
 
+-- Ok I stole all the colours from the game
 COLOURS = {
     MULT = Hex('FE5F55'),
     CHIPS = Hex("009dff"),

@@ -3,6 +3,7 @@ local allAmounts = {
     {300,  900,  2600,  8000,  20000,  36000,  60000,   100000},
     {300,  1000, 3200,  9000,  25000,  60000,  110000,  200000}
 }
+-- A cleaned up function from the official game. It's a bit more readable now.
 function getBlindAmount(ante)
     local k = 0.75
     local amounts = allAmounts[1]
