@@ -75,7 +75,7 @@ function Blind(name, data)
     self._name = name
     self.name = tileToBlindName[name]
     local bpx, bpy = convertBlindTile(blindTILE[self._name])
-    self.blindQuad = getQuad(bpx, bpy, blind_PX, blind_PY, BLIND_ATLAS, self.name)
+    self.blindQuad = getQuad(bpx, bpy, blind_PX, blind_PY, BLINDCHIPS_ATLAS, self.name)
     local _, _, width, height = self.blindQuad:getViewport()
     self.width, self.height = width, height
 
@@ -109,7 +109,7 @@ function Blind(name, data)
         x = x - (screenDepth(love.graphics.getActiveScreen()) * self.depth)
         rotation = rotation or self.rotation
         scale = scale or self.scale
-        love.graphics.draw(BLIND_ATLAS, self.blindQuad, x, y, rotation, scale, scale, self.width / 2, self.height / 2)
+        love.graphics.draw(BLINDCHIPS_ATLAS, self.blindQuad, x, y, rotation, scale, scale, self.width / 2, self.height / 2)
         if col then
             love.graphics.setColor(lastColor)
         end
