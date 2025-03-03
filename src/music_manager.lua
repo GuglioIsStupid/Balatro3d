@@ -9,4 +9,5 @@ function musicManager.load()
     musicManager.music:setLooping(true)
     musicManager.music:play()
     musicManager.music:setPitch(0.7125)
+    musicManager.music:setVolume(0.5)
 end

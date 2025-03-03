@@ -70,6 +70,7 @@ local function lerp(a, b, t)
 end
 
 function Card(card, type, enhancer, data)
+    enhancer = enhancer or "None"
     data = data or {}
     local self = {}
 
@@ -85,6 +86,8 @@ function Card(card, type, enhancer, data)
     self.origX, self.origY = data.x or 0, data.y or 0
     self.x, self.y = data.x or 0, data.y or 0
 
+    self.selected = false
+
     function self:setPos(x, y)
         self.x, self.y = x, y
         self.origX, self.origY = x, y
@@ -99,6 +102,8 @@ function Card(card, type, enhancer, data)
 
     self.dx, self.dy = 0, 0
     self.mx, self.my = 0, 0
+
+    self.doRotationMagic = false
 
     function self:draw(addX, addY, rotation, scale, col, forced)
         local lastColor
@@ -117,9 +122,9 @@ function Card(card, type, enhancer, data)
         end
         x = x - (screenDepth(love.graphics.getActiveScreen()) * self.depth)
         
-        love.graphics.draw(ENHANCERS_ATLAS, self.enhancerQuad, x, y, rotation, scale, scale, self.width / 2, self.height / 2)
+        love.graphics.draw(ENHANCERS_ATLAS, self.enhancerQuad, x, y - (self.selected and 8 or 0), rotation, scale, scale, self.width / 2, self.height / 2)
         if enhancer ~= "Back" then
-            love.graphics.draw(CARD_ATLAS, self.cardQuad, x, y, rotation, scale, scale, self.width / 2, self.height / 2)
+            love.graphics.draw(CARD_ATLAS, self.cardQuad, x, y - (self.selected and 8 or 0), rotation, scale, scale, self.width / 2, self.height / 2)
         end
         if col then
             love.graphics.setColor(lastColor)
@@ -131,6 +136,7 @@ function Card(card, type, enhancer, data)
         ox = ox or self.x
         oy = oy or self.y
         oy = oy + 20
+        scale = scale or 1
 
         local width, height = self.width * scale, self.height * scale
 
@@ -138,6 +144,10 @@ function Card(card, type, enhancer, data)
     end
 
     function self:update(dt)
+        if self.doRotationMagic then
+            -- sin the rotation
+            self.rotation = math.sin(love.timer.getTime() * 2) / 2
+        end
         if not self.grabbed then
             local ox, oy = self.x, self.y
             self.x = lerp(self.x, self.origX, 10 * dt)

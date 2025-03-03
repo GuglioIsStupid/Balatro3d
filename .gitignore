@@ -1,5 +1,10 @@
-src/resources/*
+src/resources/textures/*
+src/resources/sounds/*
+src/resources/fonts/*
 
-!src/resources/.gitkeep
+!src/resources/textures/.gitkeep
+!src/resources/sounds/.gitkeep
+!src/resources/fonts/.gitkeep
+!src/resources/textures/BlindChips.png
 
 *.zip

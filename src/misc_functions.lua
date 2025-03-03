@@ -1,3 +1,52 @@
+function makeRadialGradient(col1, col2, radius)
+    radius = radius or 300
+    local imgData = love.image.newImageData(400, 240)
+    for x = 0, 400 - 1 do
+        for y = 0, 240 - 1 do
+            local dist = math.sqrt((x - 200) ^ 2 + (y - 120) ^ 2)
+
+            local r = math.floor(col1[1] + (col2[1] - col1[1]) * dist / radius)
+            local g = math.floor(col1[2] + (col2[2] - col1[2]) * dist / radius)
+            local b = math.floor(col1[3] + (col2[3] - col1[3]) * dist / radius)
+            local a = math.floor(col1[4] + (col2[4] - col1[4]) * dist / radius)
+
+            r, g, b = r / 255, g / 255, b / 255
+            imgData:setPixel(x, y, r, g, b, a)
+        end
+    end
+
+    -- now we do pixel sampling to pixelize
+    -- higher sample means it processes faster but makes it more pixelized
+    local sample = 16
+    for x = 0, 400 - 1, sample do
+        if x + sample > 400 then break end
+        for y = 0, 240 - 1, sample do
+            if y + sample > 240 then break end
+            local r, g, b, a = 0, 0, 0, 0
+            for i = 0, sample - 1 do
+                for j = 0, sample - 1 do
+                    local _r, _g, _b, _a = imgData:getPixel(x + i, y + j)
+                    r = r + _r
+                    g = g + _g
+                    b = b + _b
+                    a = a + _a
+                end
+            end
+            r = r / sample ^ 2
+            g = g / sample ^ 2
+            b = b / sample ^ 2
+            a = a / sample ^ 2
+            for i = 0, sample - 1 do
+                for j = 0, sample - 1 do
+                    imgData:setPixel(x + i, y + j, r, g, b, a)
+                end
+            end
+        end
+    end
+
+    return love.graphics.newImage(imgData)
+end
+
 local SWITCH_POINT = 100000000000
 -- The number functions code is based on the code from the game, but has been cleaned up a bit to potentially run better on the 3DS
 function numberFormat(num)
@@ -105,7 +154,7 @@ COLOURS = {
     PERISHABLE = Hex('4f5da1'),
     RENTAL = Hex('b18f43'),
     DYN_UI = {
-        MAIN = Hex('374244'),
+        MAIN = Hex('374244FF'),
         DARK = Hex('374244'),
         BOSS_MAIN = Hex('374244'),
         BOSS_DARK = Hex('374244'),
@@ -192,3 +241,13 @@ COLOURS = {
         contrast = 1
     }
 }
+
+local seedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+function generateRandomSeed()
+    local seed = ""
+    
+    for i = 1, 8 do
+        seed = seed .. seedChars:sub(math.random(1, #seedChars), math.random(1, #seedChars))
+    end
+    return seed
+end

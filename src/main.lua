@@ -20,13 +20,16 @@ require("sprite")
 require("card")
 
 require("cursor")
+require("run_info")
+require("deck_functions")
 
 musicManager.load()
 
 local curstate = ""
 
 states = {
-    menu = require("states.menu")
+    menu = require("states.menu"),
+    game = require("states.game")
 }
 
 TOPSCREEN = {
@@ -41,13 +44,22 @@ BOTTOMSCREEN = {
     getHeight = function() return 240 end
 }
 
+local transition = {
+    alpha = 0,
+}
 function switchState(state)
     if curstate ~= "" then states[curstate]:leave() end
     curstate = state
     states[curstate]:enter()
 end
 
+BG_ASSET = makeRadialGradient({ 0, 0, 255, 255 }, { 255, 0, 0, 255 })
 switchState("menu")
+--[[ runInfo:reset("Red")
+runInfo:setSeed(generateRandomSeed())
+runInfo:shuffleDeck()
+
+switchState("game") ]]
 
 function table.find(t, value)
     for k, v in pairs(t) do

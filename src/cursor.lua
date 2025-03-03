@@ -1,11 +1,14 @@
 cursor = {}
 
 cursor.currentObj = nil
+cursor.x, cursor.y = 0, 0
 
 function cursor:moved(x, y, dx, dy)
     if self.currentObj then
         self.currentObj:moved(x, y, dx, dy)
     end
+
+    self.x, self.y = x, y
 end
 
 function cursor:grab(obj)

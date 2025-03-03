@@ -1,59 +1,10 @@
 local menu = {}
 
-local function makeRadialGradient(col1, col2, radius)
-    radius = radius or 300
-    local imgData = love.image.newImageData(400, 240)
-    for x = 0, 400-1 do
-        for y = 0, 240-1 do
-            local dist = math.sqrt((x - 200)^2 + (y - 120)^2)
-
-            local r = math.floor(col1[1] + (col2[1] - col1[1]) * dist / radius)
-            local g = math.floor(col1[2] + (col2[2] - col1[2]) * dist / radius)
-            local b = math.floor(col1[3] + (col2[3] - col1[3]) * dist / radius)
-            local a = math.floor(col1[4] + (col2[4] - col1[4]) * dist / radius)
-
-            r,g,b = r/255, g/255, b/255
-            imgData:setPixel(x, y, r, g, b, a)
-        end
-    end
-
-    -- now we do pixel sampling to pixelize
-    -- higher sample means it processes faster but makes it more pixelized
-    local sample = 16
-    for x = 0, 400-1, sample do
-        if x + sample > 400 then break end
-        for y = 0, 240-1, sample do
-            if y + sample > 240 then break end
-            local r, g, b, a = 0, 0, 0, 0
-            for i = 0, sample-1 do
-                for j = 0, sample-1 do
-                    local _r, _g, _b, _a = imgData:getPixel(x+i, y+j)
-                    r = r + _r
-                    g = g + _g
-                    b = b + _b
-                    a = a + _a
-                end
-            end
-            r = r / sample^2
-            g = g / sample^2
-            b = b / sample^2
-            a = a / sample^2
-            for i = 0, sample-1 do
-                for j = 0, sample-1 do
-                    imgData:setPixel(x+i, y+j, r, g, b, a)
-                end
-            end
-        end
-    end
-
-    return love.graphics.newImage(imgData)
-end
-
 function menu:enter()
     self.logo = Sprite(getTexture("balatro"))
     self.logo.x, self.logo.y = TOPSCREEN.getWidth() / 2, TOPSCREEN.getHeight() / 2
     self.logo.scale = 0.85
-    
+
     self.ace = Card("Ace", "Spade", "None")
     self.ace.x, self.ace.y = TOPSCREEN.getWidth() / 2, TOPSCREEN.getHeight() / 2
     self.ace.scale = 0.85
@@ -61,29 +12,27 @@ function menu:enter()
     self.logo.depth = 2
     self.ace.depth = 3
 
-    self.bg = makeRadialGradient({0, 0, 255, 255}, {255, 0, 0, 255})
-
     self.curSubMenu = nil
 
-    self.playbtn = button("Play", 15, BOTTOMSCREEN:getHeight()/2-45, 100, 85, COLOURS.BLUE, function() 
+    self.playbtn = button("Play", 15, BOTTOMSCREEN:getHeight() / 2 - 45, 100, 85, COLOURS.BLUE, function()
         self.curSubMenu = "play"
     end)
 
-    self.optionsbtn = button("Options", 120, BOTTOMSCREEN:getHeight()/2-45, 80, 40, COLOURS.ORANGE, function() 
+    self.optionsbtn = button("Options", 120, BOTTOMSCREEN:getHeight() / 2 - 45, 80, 40, COLOURS.ORANGE, function()
         print("Options!")
     end, 0.7)
 
-    self.quitbtn = button("Quit", 120, BOTTOMSCREEN:getHeight()/2, 80, 40, COLOURS.RED, function() 
+    self.quitbtn = button("Quit", 120, BOTTOMSCREEN:getHeight() / 2, 80, 40, COLOURS.RED, function()
         love.event.quit()
     end, 0.7)
 
-    self.collectionbtn = button("Collection", 205, BOTTOMSCREEN:getHeight()/2-45, 100, 85, COLOURS.GREEN, function() 
+    self.collectionbtn = button("Collection", 205, BOTTOMSCREEN:getHeight() / 2 - 45, 100, 85, COLOURS.GREEN, function()
         print("Collection!")
     end)
 
     self.t = 0 -- used for lerping
     self.targetSubmenuY = 20
-    self.startSubmenuY = BOTTOMSCREEN:getHeight()+5
+    self.startSubmenuY = BOTTOMSCREEN:getHeight() + 5
     self.submenuGoingBack = false
     self.submenu = {
         ["play"] = {
@@ -132,6 +81,12 @@ function menu:enter()
                         end),
                         playbtn = button("Play", 15, 38, 140, 75, COLOURS.GREEN, function()
                             print("Play!")
+
+                            runInfo:reset("Red")
+                            runInfo:setSeed(generateRandomSeed())
+                            runInfo:shuffleDeck()
+
+                            switchState("game")
                         end, 0.8),
                     },
                     onUpdate = function(self, dt)
@@ -145,13 +100,14 @@ function menu:enter()
                         self.deckCard:update(dt)
                     end,
                     onDrawTop = function(self)
-                        
+
                     end,
                     onDrawBottom = function(self)
-                        self.deckCard:draw(236, 77 + self.parent.y, 0, 0.8, not self.deckCard.grabbed and {0.5, 0.5, 0.5, 1} or {1, 1, 1, 1}, true)
+                        self.deckCard:draw(236, 77 + self.parent.y, 0, 0.8,
+                            not self.deckCard.grabbed and { 0.5, 0.5, 0.5, 1 } or { 1, 1, 1, 1 }, true)
                         self.deckCard:draw(0, self.parent.y, 0, 0.8)
                     end,
-                    deckCard = Card("Ace", "Spade", "Back", {x = 235, y = 75})
+                    deckCard = Card("Ace", "Spade", "Back", { x = 235, y = 75 })
                 },
                 ["continue"] = {
                     btns = {},
@@ -164,10 +120,10 @@ function menu:enter()
                         end
                     end,
                     onDrawTop = function(self)
-                        
+
                     end,
                     onDrawBottom = function(self)
-                        
+
                     end,
                 },
                 ["challenges"] = {
@@ -181,10 +137,10 @@ function menu:enter()
                         end
                     end,
                     onDrawTop = function(self)
-                        
+
                     end,
                     onDrawBottom = function(self)
-                        
+
                     end,
                 }
             }
@@ -226,14 +182,14 @@ function menu:update(dt)
     if self.curSubMenu then
         self.t = math.min(self.t + dt * 10, 1)
         if self.submenuGoingBack then
-            self.submenu[self.curSubMenu].y = lerp(self.targetSubmenuY, BOTTOMSCREEN:getHeight()+5, outQuad(self.t))
+            self.submenu[self.curSubMenu].y = lerp(self.targetSubmenuY, BOTTOMSCREEN:getHeight() + 5, outQuad(self.t))
             if self.t >= 1 then
                 self.submenuGoingBack = false
                 self.t = 0
                 self.curSubMenu = nil
             end
         else
-            self.submenu[self.curSubMenu].y = lerp(BOTTOMSCREEN:getHeight()+5, self.targetSubmenuY, outQuad(self.t))
+            self.submenu[self.curSubMenu].y = lerp(BOTTOMSCREEN:getHeight() + 5, self.targetSubmenuY, outQuad(self.t))
         end
         if self.curSubMenu then
             self.submenu[self.curSubMenu]:onUpdate(dt)
@@ -243,26 +199,26 @@ function menu:update(dt)
     end
 end
 
-function menu:touchpressed(id, x, y, dx, dy, pressure)
+function menu:touchpressed(id, x, y)
     if cursor.currentObj then return end
     if not self.curSubMenu then
-        self.playbtn:touchpressed(id, x, y, dx, dy, pressure)
-        self.optionsbtn:touchpressed(id, x, y, dx, dy, pressure)
-        self.quitbtn:touchpressed(id, x, y, dx, dy, pressure)
-        self.collectionbtn:touchpressed(id, x, y, dx, dy, pressure)
+        self.playbtn:touchpressed(id, x, y)
+        self.optionsbtn:touchpressed(id, x, y)
+        self.quitbtn:touchpressed(id, x, y)
+        self.collectionbtn:touchpressed(id, x, y)
     else
         for _, btn in pairs(self.submenu[self.curSubMenu].btns) do
-            btn:touchpressed(id, x, y, dx, dy, pressure)
+            btn:touchpressed(id, x, y)
         end
 
         for _, section in pairs(self.submenu[self.curSubMenu].sections[self.submenu[self.curSubMenu].curbtn].btns) do
-            section:touchpressed(id, x, y, dx, dy, pressure)
+            section:touchpressed(id, x, y)
         end
 
         if self.curSubMenu == "play" and self.submenu[self.curSubMenu].curbtn == "newrun" then
             local deckCard = self.submenu[self.curSubMenu].sections[self.submenu[self.curSubMenu].curbtn].deckCard
 
-            if deckCard:inBounds(x,y, nil, nil, 0.8) then
+            if deckCard:inBounds(x, y, nil, nil, 0.8) then
                 deckCard.origScale = 1.1
                 cursor:grab(deckCard)
                 print("grabbed")
@@ -271,20 +227,20 @@ function menu:touchpressed(id, x, y, dx, dy, pressure)
     end
 end
 
-function menu:touchreleased(id, x, y, dx, dy, pressure)
+function menu:touchreleased(id, x, y)
     if cursor.currentObj then return end
     if not self.curSubMenu then
-        self.playbtn:touchreleased(id, x, y, dx, dy, pressure)
-        self.optionsbtn:touchreleased(id, x, y, dx, dy, pressure)
-        self.quitbtn:touchreleased(id, x, y, dx, dy, pressure)
-        self.collectionbtn:touchreleased(id, x, y, dx, dy, pressure)
+        self.playbtn:touchreleased(id, x, y)
+        self.optionsbtn:touchreleased(id, x, y)
+        self.quitbtn:touchreleased(id, x, y)
+        self.collectionbtn:touchreleased(id, x, y)
     else
         for _, btn in pairs(self.submenu[self.curSubMenu].btns) do
-            btn:touchreleased(id, x, y, dx, dy, pressure)
+            btn:touchreleased(id, x, y)
         end
 
         for _, section in pairs(self.submenu[self.curSubMenu].sections[self.submenu[self.curSubMenu].curbtn].btns) do
-            section:touchreleased(id, x, y, dx, dy, pressure)
+            section:touchreleased(id, x, y)
         end
 
         if self.curSubMenu == "play" and self.submenu[self.curSubMenu].curbtn == "newrun" then
@@ -295,26 +251,26 @@ function menu:touchreleased(id, x, y, dx, dy, pressure)
     end
 end
 
-function menu:touchmoved(id, x, y, dx, dy, pressure)
+function menu:touchmoved(id, x, y)
     if cursor.currentObj then return end
     if not self.curSubMenu then
-        self.playbtn:touchmoved(id, x, y, dx, dy, pressure)
-        self.optionsbtn:touchmoved(id, x, y, dx, dy, pressure)
-        self.quitbtn:touchmoved(id, x, y, dx, dy, pressure)
-        self.collectionbtn:touchmoved(id, x, y, dx, dy, pressure)
+        self.playbtn:touchmoved(id, x, y)
+        self.optionsbtn:touchmoved(id, x, y)
+        self.quitbtn:touchmoved(id, x, y)
+        self.collectionbtn:touchmoved(id, x, y)
     else
         for _, btn in pairs(self.submenu[self.curSubMenu].btns) do
-            btn:touchmoved(id, x, y, dx, dy, pressure)
+            btn:touchmoved(id, x, y)
         end
 
         for _, section in pairs(self.submenu[self.curSubMenu].sections[self.submenu[self.curSubMenu].curbtn].btns) do
-            section:touchmoved(id, x, y, dx, dy, pressure)
+            section:touchmoved(id, x, y)
         end
 
         if self.curSubMenu == "play" and self.submenu[self.curSubMenu].curbtn == "newrun" then
             local deckCard = self.submenu[self.curSubMenu].sections[self.submenu[self.curSubMenu].curbtn].deckCard
 
-            if deckCard:inBounds(x,y, nil, nil, 0.8) then
+            if deckCard:inBounds(x, y, nil, nil, 0.8) then
                 deckCard.origScale = 1.1
             else
                 deckCard.origScale = 1
@@ -328,7 +284,7 @@ function menu:leave()
 end
 
 function menu:drawTop()
-    love.graphics.draw(self.bg, 0, 0)
+    love.graphics.draw(BG_ASSET, 0, 0)
     self.logo:draw()
     self.ace:draw()
 
@@ -338,10 +294,10 @@ function menu:drawTop()
 end
 
 function menu:drawBottom()
-    love.graphics.draw(self.bg, -40, 0)
+    love.graphics.draw(BG_ASSET, -40, 0)
 
     love.graphics.setColor(COLOURS.BLACK)
-    love.graphics.rectangle("fill", 10, BOTTOMSCREEN:getHeight()/2-50, 300, 100, 5, 5)
+    love.graphics.rectangle("fill", 10, BOTTOMSCREEN:getHeight() / 2 - 50, 300, 100, 5, 5)
 
     self.playbtn:draw()
     self.optionsbtn:draw()
@@ -354,7 +310,7 @@ function menu:drawBottom()
 
         love.graphics.setColor(COLOURS.BLACK)
         love.graphics.rectangle("fill", 10, self.submenu[self.curSubMenu].y, 300, 200, 5, 5)
-        
+
         for _, btn in pairs(self.submenu[self.curSubMenu].btns) do
             btn:draw()
         end
