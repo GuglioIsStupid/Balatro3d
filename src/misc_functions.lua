@@ -246,8 +246,20 @@ local seedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 function generateRandomSeed()
     local seed = ""
     
+    -- only 8 characters
     for i = 1, 8 do
-        seed = seed .. seedChars:sub(math.random(1, #seedChars), math.random(1, #seedChars))
+        local rand = math.random(1, #seedChars)
+        seed = seed .. seedChars:sub(rand, rand)
     end
     return seed
+end
+
+function randomSeedToNumber(seed)
+    local num = 0
+    for i = 1, #seed do
+        local char = seed:sub(i, i)
+        local index = seedChars:find(char)
+        num = num + index * 36 ^ (#seed - i)
+    end
+    return num
 end

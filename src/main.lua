@@ -11,7 +11,13 @@ end
 FONT = love.graphics.newFont("resources/fonts/m6x11plus.ttf", 24)
 love.graphics.setFont(FONT)
 
+math.randomseed(os.time())
+for i = 1, 4 do
+    math.randomseed(os.time() + i * math.random(1, 1000))
+end
+
 require("misc_functions")
+require("atlas")
 require("blind_functions")
 require("ui_functions")
 require("music_manager")

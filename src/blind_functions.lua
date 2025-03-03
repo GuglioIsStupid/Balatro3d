@@ -43,7 +43,6 @@ local tileToBlindName = {
     ["boss_3"] = "Boss Blind",
     ["BIG"] = "Big Blind"
 }
-BLIND_ATLAS = getTexture("BlindChips")
 local blind_PX, blind_PY = 4, 8
 local function convertBlindTile(tile)
     return (tile - 1) % blind_PX + 1, math.floor((tile - 1) / blind_PX) + 1

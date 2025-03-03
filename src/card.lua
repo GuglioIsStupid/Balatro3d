@@ -1,10 +1,3 @@
-local cards = {
-    -- name: quad
-    -- name format is type_card
-    -- e.g. Space_Ace
-}
-
-CARD_ATLAS = getTexture("8BitDeck")
 local cardOrder = {
     ["2"] = 1,
     ["3"] = 2,
@@ -27,6 +20,16 @@ local suitOrder = {
     ["Spade"] = 4
 }
 
+function getCardNumber(card)
+    if card.card == "Ace" then
+        return 11
+    elseif card.card == "Jack" or card.card == "Queen" or card.card == "King" then
+        return 10
+    else
+        return tonumber(card.card)
+    end
+end
+
 local enhancerTILE = {
     ["Back"] = 1,
     ["None"] = 2,
@@ -39,7 +42,6 @@ local enhancerTILE = {
 }
 
 local CARD_ATLAS_PX, CARD_ATLAS_PY = 13, 4
-ENHANCERS_ATLAS = getTexture("Enhancers")
 local ENHANCER_ATLAS_PX, ENHANCER_ATLAS_PY = 7, 5
 local function convertEnhancerTile(tile)
     -- converts tile into the px, py

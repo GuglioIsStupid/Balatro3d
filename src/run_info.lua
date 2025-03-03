@@ -47,7 +47,8 @@ end
 
 function runInfo:setSeed(seed)
     -- seed e.g: 8F67AZ7D
-    math.randomseed(tonumber(seed, 36))
+    print("Setting seed to " .. seed)
+    math.randomseed(randomSeedToNumber(seed))
 end
 
 function runInfo:shuffleDeck()
