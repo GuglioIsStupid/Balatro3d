@@ -1,6 +1,6 @@
 # Balatro 3D
 
-No official assets are included in this repo and must be provided by yourself.
+Assets are provided in this repo due to the requirement of needing compression.
 
 Support will not be given to compile this.
 

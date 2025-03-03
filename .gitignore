@@ -1,10 +1,11 @@
-src/resources/textures/*
-src/resources/sounds/*
 src/resources/fonts/*
 
 !src/resources/textures/.gitkeep
 !src/resources/sounds/.gitkeep
 !src/resources/fonts/.gitkeep
+
 !src/resources/textures/BlindChips.png
+!src/resources/textures/boosters.png
+
 
 *.zip
