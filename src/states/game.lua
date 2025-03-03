@@ -75,7 +75,6 @@ function game:update(dt)
             self.timer.cardTimer = 0
             local topCrd = table.remove(runInfo.deck, 1)
             table.insert(runInfo.currentDeck, topCrd)
-            runInfo.currentDeck = sortDeckByRank(runInfo.currentDeck)
             topCrd.origX, topCrd.origY = cardX, cardY
             
             cardX = cardX - cardSpacing
@@ -88,6 +87,7 @@ function game:update(dt)
         end
     else
         if self.justFinishedFilling then
+            runInfo.currentDeck = sortDeckByRank(runInfo.currentDeck)
             self.justFinishedFilling = false
 
             -- resort origX
